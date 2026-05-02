@@ -1,0 +1,16 @@
+/* 1. Imports sempre no topo */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+@theme {
+    /* Isso cria a classe .font-inter */
+    --font-inter: "Inter", ui-sans-serif, system-ui;
+}
+@theme {
+    --font-jetbrains: "JetBrainsMono", ui-sans-serif, system-ui;
+}
+
+body {
+    background-color: black;
+}
