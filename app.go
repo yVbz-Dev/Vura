@@ -29,9 +29,15 @@ func (a *App) Greet(name string) string {
 }
 
 func (a *App) SelectFolder() string {
-	// Abre o seletor de diretórios nativo usando o contexto do Wails
-	path, err := runtime.OpenDirectoryDialog(a.ctx, runtime.OpenDialogOptions{
+	// Open file dialog 
+	path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Choose the folder",
+		Filters : []runtime.FileFilter{
+			{
+				DisplayName: "Select a file (.txt, .go, .py)",
+				Pattern:     "*.go;*.py;*.js;*.ts;*.e;*.c;*.cpp;*.jsx;*.tsx;*.cs;",
+			},
+		},
 	})
 
 	if err != nil {
