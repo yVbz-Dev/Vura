@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../App.css"; 
+import "../App.css";
 import { Panel, Group, Separator } from "react-resizable-panels";
 import React from "react";
 import CodeMirror, { oneDark } from "@uiw/react-codemirror";
@@ -27,26 +27,7 @@ function Editor() {
         >
           Vura
         </h3>
-        <div className="flex w-full items-center flex-row ml-2 \h-full">
-          <div className="h-full">
-            <p
-              className="font-jetbrains text-white border-l border-r
-              border-white/90 h-full w-full pl-2 pr-2 text-center
-              flex items-center justify-center"
-            >
-              editor.jsx {"\uea76"}
-            </p>
-          </div>
-          <div className="h-full">
-            <p
-              className="font-jetbrains text-white border-l border-r
-              border-white/90 h-full w-full pl-2 pr-2 text-center
-              flex items-center justify-center"
-            >
-              welcome.jsx {"\uea76"}
-            </p>
-          </div>
-        </div>
+        <div className="flex w-full items-center flex-row ml-2 \h-full"></div>
       </nav>
       <Group>
         <Panel minSize={600}>
