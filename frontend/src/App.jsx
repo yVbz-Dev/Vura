@@ -5,10 +5,27 @@ import Editor from "./components/editor.jsx";
 
 function App() {
   const [editor, setEditor] = useState(false);
+  const [fileData, setFileData] = useState(null);
 
-  return <>{editor ? <Editor /> : <Welcome editor={()=>{
-    setEditor(true)
-  }} />}</>;
+  return (
+    <>
+      {editor ? (
+        <Editor FileData={fileData} />
+      ) : (
+        <Welcome
+          content={(Content) => {
+            setFileContent(Content);
+          }}
+          editor={() => {
+            setEditor(true);
+          }}
+          fileData={(FileData) => {
+            setFileData(FileData);
+          }}
+        />
+      )}
+    </>
+  );
 }
 
 export default App;

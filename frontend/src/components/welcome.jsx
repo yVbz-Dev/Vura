@@ -1,4 +1,5 @@
-import { useState } from "react"; import "../App.css";
+import { useState } from "react";
+import "../App.css";
 function Welcome(props) {
   const [enableGlow, setEnableGlow] = useState(false);
 
@@ -14,7 +15,7 @@ function Welcome(props) {
         </p>
       </nav>
       <hr
-          className={`border-t-white  mb-3
+        className={`border-t-white  mb-3
           ${enableGlow ? "shadow-[0_0_6px_rgba(255,255,255,0.3)]" : "shadow-none"}
           `}
       ></hr>
@@ -23,7 +24,7 @@ function Welcome(props) {
           ${enableGlow ? "text-shadow-[0_0_4px_rgba(255,255,255,0.15)]" : "text-shadow-none"}
           `}
       >
-        Choose your project file
+        Choose your file
       </h1>
 
       <div className="flex items-center justify-center mt-15">
@@ -34,13 +35,14 @@ function Welcome(props) {
           hover:-translate-y-0.5
           `}
           onClick={async (e) => {
-            const filePath = await window.go.main.App.SelectFolder();
-            if (filePath) {
-              props.editor()
+            const FileData = await window.go.main.App.SelectFolder();
+            if (FileData) {
+              props.editor();
+              props.fileData(FileData);
             }
           }}
         >
-          {"\uea80"} Choose your folder
+          {"\uea80"} Choose your file
         </button>
       </div>
 
@@ -66,7 +68,7 @@ function Welcome(props) {
             Vura is a lightweight, high-performance IDE built for developers who
             value speed and a distraction-free workflow. Engineered with Go and
             React via Wails, it brings a native-feeling experience directly to
-            your Linux environment.
+            your desktop environment.
           </p>
         </div>
       </div>

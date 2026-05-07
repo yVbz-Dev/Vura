@@ -3,9 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
+
+type FileData struct {
+	Name    string
+	Content string
+	Path    string
+}
 
 // App struct
 type App struct {
@@ -28,11 +36,11 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-func (a *App) SelectFolder() string {
-	// Open file dialog 
+func (a *App) SelectFolder() FileData {
+	// Open file dialog
 	path, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Choose the folder",
-		Filters : []runtime.FileFilter{
+		Filters: []runtime.FileFilter{
 			{
 				DisplayName: "Select a file (.txt, .go, .py)",
 				Pattern:     "*.go;*.py;*.js;*.ts;*.e;*.c;*.cpp;*.jsx;*.tsx;*.cs;",
@@ -41,8 +49,25 @@ func (a *App) SelectFolder() string {
 	})
 
 	if err != nil {
-		return ""
+		return FileData{}
 	}
-	fmt.Println(path)
-	return path
+
+	// get file content
+	content, error := os.ReadFile(path)
+	if error != nil {
+		return FileData{}
+	}
+	return FileData{
+		Name:    filepath.Base(path),
+		Content: string(content),
+		Path:    path,
+	}
+}
+
+func (a *App) SaveFile(data FileData) error {
+	err := os.WriteFile(data.Path, []byte(data.Content), 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
