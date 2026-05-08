@@ -90,8 +90,29 @@ function Editor(props) {
         </h3>
         <div className="flex w-full items-center flex-row ml-2 \h-full">
           {tabs.map((tab) => {
-            return <Tab key={tab.ID} fileName={tab.Name}></Tab>;
+            return <Tab onClick={(e) => {
+              setActiveTab(tab)
+            }} key={tab.ID} fileName={tab.Name}></Tab>;
           })}
+          <button className="m-4 font-jetbrains text-white " onClick={
+            async (e) => {
+              const fileData = await window.go.main.App.SelectFolder()
+              if (fileData) {
+                const newTabs = tabs
+                newTabs.push({
+                  ID: Date.now(),
+                  Name: fileData.Name,
+                  Content: fileData.Content,
+                })
+                setTabs(newTabs)
+                setActiveTab({
+                  ID: Date.now(),
+                  Name: fileData.Name,
+                  Content: fileData.Content,
+                })
+              }
+            }
+          }>{"\uf067"}</button>
         </div>
       </nav>
       <Group>
@@ -101,7 +122,7 @@ function Editor(props) {
               <p className="font-jetbrains text-white">{activeTab.Name}</p>
             </div>
             <CodeMirror
-              value={props.FileData.Content}
+              value={activeTab.Content}
               height="100vh"
               width="100vw"
               theme={VuraTheme}
