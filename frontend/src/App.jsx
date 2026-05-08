@@ -6,6 +6,7 @@ import Editor from "./components/editor.jsx";
 function App() {
   const [editor, setEditor] = useState(false);
   const [fileData, setFileData] = useState(null);
+  // oi mate
 
   return (
     <>
