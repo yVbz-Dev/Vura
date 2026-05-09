@@ -2,7 +2,7 @@ import "../../App.css";
 
 export default function Tab(props) {
   return (
-    <div onClick={props?.onClick} className="h-full">
+    <div onMouseDown={props?.onMouseDown} className="h-full">
       <p
         className="font-jetbrains text-white border-l border-r-[0.1px]
         border-white/90 h-full w-full pl-2 pr-2 text-center

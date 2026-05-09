@@ -13,13 +13,12 @@ import App from "../App";
 
 function Editor(props) {
   const currTab = {
-    ID: Date.now(),
     Content: props.FileData.Content,
     Name: props.FileData.Name,
     Path: props.FileData.Path,
   };
   const [activeTab, setActiveTab] = useState(currTab);
-  const [tabs, setTabs] = useState([currTab]);
+  const [tabs, setTabs] = useState({ [currTab.Path]: currTab });
   const VuraTheme = EditorView.theme(
     {
       // O "&" representa o container principal do editor
@@ -89,31 +88,53 @@ function Editor(props) {
           Vura
         </h3>
         <div className="flex w-full items-center flex-row ml-2 \h-full">
-          {tabs.map((tab) => {
-            return <Tab onClick={(e) => {
-              setActiveTab(tab)
-            }} key={tab.ID} fileName={tab.Name}></Tab>;
+          {Object.values(tabs).map((tab) => {
+            return (
+              <Tab
+                onMouseDown={(e) => {
+                  e.preventDefault()
+                  if (e.button == 0) {
+                    setActiveTab(tab)
+                  } else if (e.button == 2) {
+                    // close tab
+                    const {
+                      [tab.Path]: _, ...otherTabs
+                    } = tabs
+                    setTabs(otherTabs)
+                    if (tab.Path == activeTab.Path) {
+                      const tabsObject = Object.keys(otherTabs)
+                      const lastPath = tabsObject.at(-1)
+                      setActiveTab(otherTabs[lastPath])
+                    }
+                  }
+                }}
+                key={tab.Path}
+                fileName={tab.Name}
+              ></Tab>
+            );
           })}
-          <button className="m-4 font-jetbrains text-white " onClick={
-            async (e) => {
-              const fileData = await window.go.main.App.SelectFolder()
+          <button
+            className="m-4 font-jetbrains text-white "
+            onClick={async (e) => {
+              // open tab
+              const fileData = await window.go.main.App.SelectFolder();
               if (fileData) {
-                const newTabs = tabs
-                newTabs.push({
-                  ID: Date.now(),
-                  Name: fileData.Name,
-                  Content: fileData.Content,
-                })
-                setTabs(newTabs)
-                setActiveTab({
-                  ID: Date.now(),
-                  Name: fileData.Name,
-                  Content: fileData.Content,
-                })
+                const newTabs = {
+                  ...tabs,
+                  [fileData.Path]: {
+                    Name: fileData.Name,
+                    Content: fileData.Content,
+                    Path: fileData.Path,
+                  }
+                }
+                setTabs(newTabs);
+                setActiveTab(newTabs[fileData.Path]);
               }
-            }
-          }>{"\uf067"}</button>
-        </div>
+            }}
+          >
+            {"\uf067"}
+          </button>
+        </div>
       </nav>
       <Group>
         <Panel minSize={600}>
