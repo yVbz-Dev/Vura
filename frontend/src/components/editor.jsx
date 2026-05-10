@@ -9,6 +9,9 @@ import { EditorView } from "@uiw/react-codemirror";
 import { tags as t } from "@lezer/highlight";
 import Tab from "./AppComponents/tab";
 import { useEffect } from "react";
+import { useContext } from "react";
+import { VuraConfigContext } from "../VuraConfig";
+import { vim } from "@replit/codemirror-vim";
 import App from "../App";
 
 function Editor(props) {
@@ -17,6 +20,8 @@ function Editor(props) {
     Name: props.FileData.Name,
     Path: props.FileData.Path,
   };
+  const { Config, UpdateConfig } = useContext(VuraConfigContext)
+  console.log("oi mate...")
   const [activeTab, setActiveTab] = useState(currTab);
   const [tabs, setTabs] = useState({ [currTab.Path]: currTab });
   const VuraTheme = EditorView.theme(
@@ -88,31 +93,32 @@ function Editor(props) {
           Vura
         </h3>
         <div className="flex w-full items-center flex-row ml-2 \h-full">
-          {Object.values(tabs).map((tab) => {
-            return (
-              <Tab
-                onMouseDown={(e) => {
-                  e.preventDefault()
-                  if (e.button == 0) {
-                    setActiveTab(tab)
-                  } else if (e.button == 2) {
-                    // close tab
-                    const {
-                      [tab.Path]: _, ...otherTabs
-                    } = tabs
-                    setTabs(otherTabs)
-                    if (tab.Path == activeTab.Path) {
-                      const tabsObject = Object.keys(otherTabs)
-                      const lastPath = tabsObject.at(-1)
-                      setActiveTab(otherTabs[lastPath])
+          {
+            Object.values(tabs || {}).map((tab) => {
+              return (
+                <Tab
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    if (e.button == 0) {
+                      setActiveTab(tab)
+                    } else if (e.button == 2) {
+                      // close tab
+                      const {
+                        [tab.Path]: _, ...otherTabs
+                      } = tabs
+                      setTabs(otherTabs)
+                      if (tab.Path == activeTab.Path) {
+                        const tabsObject = Object.keys(otherTabs)
+                        const lastPath = tabsObject.at(-1)
+                        setActiveTab(otherTabs[lastPath])
+                      }
                     }
-                  }
-                }}
-                key={tab.Path}
-                fileName={tab.Name}
-              ></Tab>
-            );
-          })}
+                  }}
+                  key={tab.Path}
+                  fileName={tab.Name}
+                ></Tab>
+              );
+            })}
           <button
             className="m-4 font-jetbrains text-white "
             onClick={async (e) => {
@@ -148,26 +154,25 @@ function Editor(props) {
               width="100vw"
               theme={VuraTheme}
               onChange={(value) => {
-                activeTab.Content = value;
-                setTabs((prev) =>
-                  prev.map((t) => {
-                    if (t.ID == activeTab.ID) {
-                      return {
-                        ID: activeTab.ID,
-                        Content: value,
-                        Name: activeTab.Name,
-                        Path: activeTab.Path,
-                      };
+                console.log("OnChange mudou! ", tabs)
+                setTabs((prev) => {
+                  if (!prev) [];
+
+                  return {
+                    ...prev,
+                    [activeTab.Path]: {
+                      ...prev[activeTab.Path],
+                      Content: value
                     }
-                    return t;
-                  }),
-                );
+                  }
+                })
+                return value
               }}
               style={{
                 height: "100vh",
                 width: "100vw",
               }}
-              extensions={[oneDark, javascript({ jsx: true })]}
+              extensions={[oneDark, Config.VimMode ? vim() : [], javascript({ jsx: true })]}
             />
           </div>
         </Panel>

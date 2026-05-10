@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./App.css";
 import Welcome from "./components/welcome.jsx";
 import Editor from "./components/editor.jsx";
+import VuraConfigProvider from "./VuraConfig.jsx"
 
 function App() {
   const [editor, setEditor] = useState(false);
@@ -10,7 +11,7 @@ function App() {
   // another line mate
 
   return (
-    <>
+    <VuraConfigProvider>
       {editor ? (
         <Editor FileData={fileData} />
       ) : (
@@ -26,7 +27,8 @@ function App() {
           }}
         />
       )}
-    </>
+
+    </VuraConfigProvider>
   );
 }
 
