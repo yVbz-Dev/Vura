@@ -27,7 +27,7 @@ function Welcome(props) {
         Choose your file
       </h1>
 
-      <div className="flex items-center justify-center mt-15">
+      <div className="flex items-center justify-center mt-15 sticky">
         <button
           className={`text-[1.5rem] text-white font-jetbrains font-bold p-4 rounded-md border
           ${enableGlow ? "text-shadow-[0_0_4px_rgba(255,255,255,0.15)] shadow-[0_0_4px_rgba(255,255,255,0.2)]" : "text-shadow-none shadow-none"}
@@ -36,9 +36,16 @@ function Welcome(props) {
           `}
           onClick={async (e) => {
             const FileData = await window.go.main.App.SelectFolder();
-            if (FileData) {
+            console.log(FileData)
+            if (FileData && FileData.Path != "") {
               props.editor();
               props.fileData(FileData);
+            } else {
+              window.runtime.SendNotification({
+                ID: "Fail Notification",
+                Title: "File not found",
+                Body: "The file does not exists!"
+              })
             }
           }}
         >

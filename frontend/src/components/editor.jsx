@@ -81,7 +81,7 @@ function Editor(props) {
   return (
     <div className="h-full w-full flex flex-col items-center">
       <nav
-        className="bg-[#121212]
+        className="bg-[#121212] fixed z-10
         flex items-stretch flex-row h-10
         border-b border-white/50 w-full"
       >
@@ -120,11 +120,11 @@ function Editor(props) {
               );
             })}
           <button
-            className="m-4 font-jetbrains text-white "
+            className="m-4 p-2 font-jetbrains text-white "
             onClick={async (e) => {
               // open tab
               const fileData = await window.go.main.App.SelectFolder();
-              if (fileData) {
+              if (fileData && fileData.Path != "") {
                 const newTabs = {
                   ...tabs,
                   [fileData.Path]: {
@@ -135,19 +135,25 @@ function Editor(props) {
                 }
                 setTabs(newTabs);
                 setActiveTab(newTabs[fileData.Path]);
+              } else {
+                window.runtime.SendNotification({
+                  ID: "Fail Notification",
+                  Title: "File not found",
+                  Body: "The file does not exists!"
+                })
               }
             }}
           >
             {"\uf067"}
           </button>
+          <div className="mt-[4.35rem] bg-[#151515] p-0.5 w-full self-center grow pr-5 flex fixed -mx-16 z-8 flex-col items-center m-[0.1rem]">
+            <p className="font-jetbrains text-center text-white">{activeTab.Name}</p>
+          </div>
         </div>
       </nav>
       <Group>
         <Panel minSize={600}>
           <div className="h-full w-full flex flex-col items-center">
-            <div className="w-full h-6 flex flex-col items-center m-[0.1rem]">
-              <p className="font-jetbrains text-white">{activeTab.Name}</p>
-            </div>
             <CodeMirror
               value={activeTab.Content}
               height="100vh"

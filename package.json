@@ -10,6 +10,8 @@
     "@uiw/codemirror-theme-white": "^4.25.9",
     "@uiw/codemirror-themes-all": "^4.25.9",
     "@uiw/react-codemirror": "^4.25.9",
-    "react-resizable-panels": "^4.11.0"
+    "@xterm/xterm": "^5.5.0",
+    "react-resizable-panels": "^4.11.0",
+    "react-xtermjs": "^1.0.11"
   }
 }

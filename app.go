@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -29,6 +30,10 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	err := runtime.InitializeNotifications(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Greet returns a greeting for the given name
