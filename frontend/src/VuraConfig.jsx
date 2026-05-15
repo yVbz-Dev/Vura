@@ -1,11 +1,17 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { GetConfig } from "../wailsjs/go/main/App"
 
 export const VuraConfigContext = createContext()
 
 export default function VuraConfigProvider({ children }) {
-  const [Config, setConfig] = useState({
-    VimMode: true
-  })
+  const UserConfig = null
+  useEffect(() => {
+    GetConfig().then((config) => {
+      setConfig(config)
+    })
+  }, [])
+
+  const [Config, setConfig] = useState(UserConfig)
 
   const UpdateConfig = (key, value) => {
     const newConfig = {

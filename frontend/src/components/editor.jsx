@@ -4,15 +4,23 @@ import { Panel, Group, Separator } from "react-resizable-panels";
 import React from "react";
 import CodeMirror, { oneDark } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { whiteDark } from "@uiw/codemirror-theme-white";
+import { rust } from "@codemirror/lang-rust";
+import { cpp } from "@codemirror/lang-cpp"
 import { EditorView } from "@uiw/react-codemirror";
-import { tags as t } from "@lezer/highlight";
 import Tab from "./AppComponents/tab";
 import { useEffect } from "react";
 import { useContext } from "react";
 import { VuraConfigContext } from "../VuraConfig";
 import { vim } from "@replit/codemirror-vim";
 import App from "../App";
+
+const extensionsName = {
+  ".js": () => javascript({ jsx: true, typescript: true }),
+  ".rs": () => rust(),
+  ".cpp": () => cpp(),
+  ".jsx": () => javascript({ jsx: true, typescript: true }),
+  ".ts": () => javascript({ jsx: true, typescript: true }),
+}
 
 function Editor(props) {
   const currTab = {
@@ -21,7 +29,6 @@ function Editor(props) {
     Path: props.FileData.Path,
   };
   const { Config, UpdateConfig } = useContext(VuraConfigContext)
-  console.log("oi mate...")
   const [activeTab, setActiveTab] = useState(currTab);
   const [tabs, setTabs] = useState({ [currTab.Path]: currTab });
   const VuraTheme = EditorView.theme(
@@ -58,9 +65,20 @@ function Editor(props) {
   // save file logic
   const saveFile = async (FileData) => {
     try {
-      await window.go.main.App.SaveFile(FileData);
+      const err = await window.go.main.App.SaveFile(FileData);
+      if (err) {
+        window.runtime.SendNotification({
+          ID: "Fail Notification",
+          Title: "Fail saving notification!",
+          Body: "Error: " + err.toString()
+        })
+      }
     } catch (err) {
-      alert("Error saving file: ", err);
+      window.runtime.SendNotification({
+        ID: "Fail Notification",
+        Title: "Fail saving notification!",
+        Body: "Error: " + err.toString()
+      })
     }
   };
 
@@ -69,8 +87,8 @@ function Editor(props) {
     const saveBind = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
-        console.log(activeTab);
-        saveFile(activeTab);
+        console.log(tabs[activeTab.Path]);
+        saveFile(tabs[activeTab.Path]);
       }
     };
 
@@ -153,14 +171,13 @@ function Editor(props) {
       </nav>
       <Group>
         <Panel minSize={600}>
-          <div className="h-full w-full flex flex-col items-center">
+          <div className="overflow-scroll mt-16 w-full flex flex-col items-center">
             <CodeMirror
               value={activeTab.Content}
               height="100vh"
               width="100vw"
               theme={VuraTheme}
               onChange={(value) => {
-                console.log("OnChange mudou! ", tabs)
                 setTabs((prev) => {
                   if (!prev) [];
 
@@ -178,13 +195,18 @@ function Editor(props) {
                 height: "100vh",
                 width: "100vw",
               }}
-              extensions={[oneDark, Config.VimMode ? vim() : [], javascript({ jsx: true })]}
+              extensions={[oneDark, Config.VimMode ? vim() : [], (extensionsName[getFileExtension(activeTab.Name)] || (() => []))()]}
             />
           </div>
         </Panel>
       </Group>
     </div>
   );
+}
+
+function getFileExtension(fileName) {
+  console.log(fileName, fileName.slice(fileName.lastIndexOf(".")).toLowerCase())
+  return fileName.slice(fileName.lastIndexOf(".")).toLowerCase()
 }
 
 export default Editor;

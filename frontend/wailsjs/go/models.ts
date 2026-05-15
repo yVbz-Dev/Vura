@@ -1,5 +1,17 @@
 export namespace main {
 	
+	export class Config {
+	    VimMode: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Config(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.VimMode = source["VimMode"];
+	    }
+	}
 	export class FileData {
 	    Name: string;
 	    Content: string;
